@@ -1,0 +1,7 @@
+chromadb
+langchain
+langchain_community
+langchain-chroma
+bs4
+tqdm
+tiktoken
