@@ -24,11 +24,11 @@ pip install requirements.txt
 
 To start the crawler, run
 ```
-python crawler.py [-h] --url URL --base BASE --path PATH [--depth DEPTH] [--exclude [EXCLUDE ...]] [--no-update]
+python crawler.py [-h] --url URL --base BASE --out OUT [--depth DEPTH] [--exclude [EXCLUDE ...]] [--no-update]
 ```
 or for the multithreaded crawler, run
 ```
-crawler_multi.py [-h] --url URL [URL ...] --base BASE --path PATH [--depth DEPTH] [--exclude [EXCLUDE ...]] [--no-update]
+crawler_multi.py [-h] --url URL [URL ...] --base BASE --out OUT [--depth DEPTH] [--exclude [EXCLUDE ...]] [--no-update]
 ```
 See ``python crawler.py -h`` or ``python crawler_multi.py -h`` for more information about the argument options.
 
@@ -43,7 +43,7 @@ Finally, the RAG application can be run under ``local_rag.ipynb``.
 ## Future Improvements
 - I might try to re-implement the crawler with Beautiful Soup or Selenium for more flexibility in what I'm scraping. Currently ``crawler.py`` is relying on LangChain's ``RecursiveURLLoader`` which convieniently parses the web content into text but the library fails to capture HTML content that is loaded dynamically by the web page. 
 - I'm thinking of a systematic approach to clean out irrelevant content for each web page. So far, there are many irrelevant text from navigation and side bars, for example, that is included in the page content, which introduces a lot of noise during inference. 
-- I'm still conflicted about adding a condition to perform web search if no relevant documents are found because I still want to keep everything in a local environment.
+- I'm still conflicted about adding a condition to perform web search (if no relevant documents are found) because I do want to keep everything in a local environment.
 - Like many other RAG example, I might add a final hallucination checking stage to confirm that the LLM is backing up its answer with only the provided documents.
 
 ## Relevant Resources

@@ -42,12 +42,12 @@ def start_crawler(i: int, loader: RecursiveUrlLoader, prev_crawled_links: Set[st
 
                     # Write new document to file or update existing document
                     if not url in prev_crawled_links or not args.no_update:
-                        with open(f"{args.path}/{filename}.json", "w") as f:
+                        with open(f"{args.out}/{filename}.json", "w") as f:
                             json.dump(doc_dict, f, indent=4)
                             crawled_links.add(url)
                     # Append URL to list of crawled URLs
                     if not url in prev_crawled_links:
-                        with open(f"{args.path}/urls.txt", "a") as f:
+                        with open(f"{args.out}/urls.txt", "a") as f:
                             f.write(url+"\n")
     except (Exception, KeyboardInterrupt) as e:
         print(repr(e))
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Crawls websites from the base URL and store all web content into individual JSON files.")
     parser.add_argument("--url", nargs="+", required=True, help="The initial URLs to crawl from")
     parser.add_argument("--base", type=str, required=True, help="The base URL to prevent crawling external links")
-    parser.add_argument("--path", type=str, required=True, help="The directory to store the web content")
+    parser.add_argument("--out", type=str, required=True, help="The directory to store the web content")
     parser.add_argument("--depth", type=int, default=2, help="The max depth of the recursive crawling")
     parser.add_argument("--exclude", nargs="*", help="Exclude subdirectories that contain the provided list of strings")
     parser.add_argument("--no-update", action="store_true", help="Do not update previously crawled links")
@@ -67,14 +67,14 @@ if __name__ == "__main__":
     print(f"Exclude substrings: {args.exclude}")
     print(f"Update existing documents: {not args.no_update}")
 
-    logging.basicConfig(filename=f"{args.path}/crawler.log", level=logging.INFO, format="%(message)s")
+    logging.basicConfig(filename=f"{args.out}/crawler.log", level=logging.INFO, format="%(message)s")
     logger.info(f"Running crawler with {len(args.url)} threads")
 
     prev_crawled_links = set()
     crawled_links = set()
-    if os.path.isfile(f"{args.path}/urls.txt"):
+    if os.path.isfile(f"{args.out}/urls.txt"):
         # Do not append URLs that were already crawled
-        with open(f"{args.path}/urls.txt") as f:
+        with open(f"{args.out}/urls.txt") as f:
             prev_crawled_links = set(f.read().splitlines())
     
     threads = []
