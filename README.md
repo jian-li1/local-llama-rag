@@ -1,5 +1,5 @@
 # Local RAG with Llama 3.1
-This project focuses on refining the accuracy and correctness of LLM inferences with web page content as context using a RAG (Retrieval Augmented Generation) approach. The LLM and embedding model used here are Llama 3.1 8B and ``mxbai-embed-large``, respectively, both of which are launched with Ollama. 
+This project focuses on refining the accuracy and correctness of LLM inferences with web page content as context using a RAG (Retrieval Augmented Generation) approach. The LLM and embedding model used here are Llama 3.1 8B and ``mxbai-embed-large``, respectively, both of which are launched with [Ollama](https://ollama.com). 
 
 This project has three components: the web crawler, the database builder, and the RAG application.
 
@@ -17,7 +17,15 @@ Similar to ``crawler_multi.py``, this program is also multi-thread since Chroma 
 The Jupyter notebook ``local_rag.ipynb`` sets up the entire RAG pipeline and creates the workflow using the LangGraph library. The function ``generate_answer()`` not only returns the generated response but also the chunk IDs that were used for context. 
 
 ## Usage
-First, install the required packages:
+First, download Ollama from this [link](https://ollama.com/download).
+
+To install the LLM and embedding models, run
+```
+ollama pull llama3.1
+ollama pull mxbai-embed-large
+```
+
+Next, install the required packages:
 ```
 pip install requirements.txt
 ```
@@ -32,7 +40,7 @@ crawler_multi.py [-h] --url URL [URL ...] --base BASE --out OUT [--depth DEPTH] 
 ```
 See ``python crawler.py -h`` or ``python crawler_multi.py -h`` for more information about the argument options.
 
-Next, to build the database, run
+To build the database, run
 ```
 python build_database.py [-h] -d DIR [DIR ...] -o OUT -n NAME [-u]
 ```
