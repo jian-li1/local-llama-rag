@@ -73,13 +73,13 @@ async def start_crawler(start_url: str):
 
                 # Write new web page to file or update existing web page
                 if not url in prev_crawled_links or not args.no_update:
-                    with open(f"{args.out}/{filename}.json", "w") as f:
+                    with open(f"{args.out}/{filename}.json", "w", encoding="utf-8") as f:
                         json.dump(result_dict, f, indent=4)
                         crawled_links.add(url)
                 
                 # Append URL to list of crawled URLs
                 if not url in prev_crawled_links:
-                    with open(f"{args.out}/urls.txt", "a") as f:
+                    with open(f"{args.out}/urls.txt", "a", encoding="utf-8") as f:
                         f.write(url+"\n")
 
                 crawled_links.add(url)
