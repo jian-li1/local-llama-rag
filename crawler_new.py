@@ -161,7 +161,6 @@ if __name__ == "__main__":
                         Default selector is 'div'.")
     parser.add_argument("--exclude", nargs="*", help="Exclude subdirectories that contain the provided list of strings")
     parser.add_argument("--no-update", action="store_true", help="Do not update previously crawled links")
-    parser.add_argument("--verbose", action="store_true", default=False)
     args = parser.parse_args()
 
     args.css = ["div"] if not args.css else args.css + ["div"]
