@@ -1,3 +1,4 @@
+crawl4ai @ git+https://github.com/aravindkarnam/crawl4ai.git@langchain
 chromadb
 langchain
 langgraph
@@ -6,3 +7,4 @@ langchain-chroma
 bs4
 tqdm
 tiktoken
+lxml
