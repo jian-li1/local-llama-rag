@@ -29,10 +29,13 @@ def get_time():
     return time.strftime('%H:%M:%S', time.gmtime(time.time() - start))
 
 def process_html(url: str, html: str) -> CrawlResult:
+    # Fix HTML with BeautifulSoup
+    html = str(Soup(html, "lxml"))
+
     # Extract content from HTML
     for css in args.css:
         try:
-            result = get_content_of_website_optimized(url=url, html=html, word_count_threshold=5, css_selector=css, only_text=False)
+            result = get_content_of_website_optimized(url=url, html=html, word_count_threshold=1, css_selector=css, only_text=False)
             break
         except InvalidCSSSelectorError as e:
             logger.error(str(e))
@@ -170,12 +173,12 @@ if __name__ == "__main__":
     parser.add_argument("--depth", type=int, default=2, help="The max depth of the recursive crawling")
     parser.add_argument("--css", nargs="*", help="Filter content with CSS selectors. Allows multiple CSS selectors but prioritizes first selector. \
                         If first selector not found in web page, falls back to subsequent selectors. \
-                        Default selector is 'div'.")
+                        Default selector is the entire HTML.")
     parser.add_argument("--exclude", nargs="*", help="Exclude subdirectories that contain the provided list of strings")
     parser.add_argument("--no-update", action="store_true", help="Do not update previously crawled links")
     args = parser.parse_args()
 
-    args.css = ["div"] if not args.css else args.css + ["div"]
+    args.css = [""] if not args.css else args.css + [""]
     print(f"CSS selectors: {args.css}")
     print(f"Exclude substrings: {args.exclude}")
     print(f"Update existing documents: {not args.no_update}")
