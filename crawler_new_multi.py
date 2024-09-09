@@ -42,9 +42,10 @@ def process_html(url: str, html: str) -> CrawlResult:
         return None
     
     cleaned_html = sanitize_input_encode(result.get("cleaned_html", ""))
-
-    # Parse HTML into markdown and get HTML links and metadata
+    # Parse HTML into markdown and remove all image references from markdown
     markdown = sanitize_input_encode(result.get("markdown", ""))
+    markdown = re.sub(r'!\[.*?\]\(.*?\)\n*', " ", markdown, flags=re.DOTALL)
+    # Get HTML metadata
     media = result.get("media", [])
     links = result.get("links", [])
     metadata = result.get("metadata", {})
