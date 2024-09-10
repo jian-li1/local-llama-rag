@@ -20,6 +20,7 @@ logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 crawler_queue = queue.Queue()
+queued_links = set()
 
 def get_time():
     return time.strftime('%H:%M:%S', time.gmtime(time.time() - start))
@@ -93,12 +94,14 @@ def start_crawler(start_url: str):
     
     # Add inital URL
     crawler_queue.put((start_url, 1))
+    queued_links.add(start_url)
     
     try:
         while True:
             # Get URL from queue
             if not crawler_queue.empty():
                 url, depth = crawler_queue.get()
+                queued_links.remove(url)
             else:
                 break
             
@@ -112,7 +115,7 @@ def start_crawler(start_url: str):
             
             # URL might be a redirect so check if the redirected URL is already crawled
             if response.url in crawled_links:
-                logger.info(f"{get_time()} -- {url} is a redirect, skipping")
+                logger.info(f"{get_time()} -- {url} is a redirect or a duplicate, skipping")
                 continue
             
             total_docs += 1
@@ -151,10 +154,10 @@ def start_crawler(start_url: str):
                     elif args.exclude and any([s in link.split("//", 1)[-1] for s in args.exclude]):
                         continue
                 
-                    # Add to queue
-                    crawler_queue.put((link, depth+1))
-                    # Add URL to set of crawled links
-                    crawled_links.add(link)
+                    # Add to queue if new link
+                    if not link in queued_links and not link in crawled_links:
+                        crawler_queue.put((link, depth+1))
+                        queued_links.add(link)
     except (Exception, KeyboardInterrupt) as e:
         print(repr(e))
 
