@@ -119,6 +119,7 @@ def start_crawler(i: int, start_url: str):
                 logger.error(f"{get_time()} -- Failed to retrieve content from {url}")
                 continue
             
+<<<<<<< HEAD
             # Original URL
             og_url = response.url.split("#")[0]
             # Original URL might contain excluded strings
@@ -129,15 +130,25 @@ def start_crawler(i: int, start_url: str):
             with lock:
                 # URL might be a redirect so check if the original URL is already crawled
                 if og_url in crawled_links:
+=======
+            with lock:
+                # URL might be a redirect so check if the redirected URL is already crawled
+                if response.url in crawled_links:
+>>>>>>> main
                     logger.warning(f"{get_time()} -- {url} is a redirect or a duplicate, skipping")
                     continue
                  
                 total_docs += 1
+<<<<<<< HEAD
                 logger.info(f"{get_time()} -- Thread {i} -- {total_docs} -- {depth} -- {og_url} -- {total_load_time:.2f}")
+=======
+                logger.info(f"{get_time()} -- Thread {i} -- {total_docs} -- {depth} -- {url} -- {total_load_time:.2f}")
+>>>>>>> main
             
             # Process HTML and extract data
             result = process_html(url, response.text)
             
+<<<<<<< HEAD
             filename = og_url.split("//", 1)[-1].replace("/", "-").replace(":", "-")
             result_dict = {"metadata": {"source": og_url} | result.metadata, "page_content": result.markdown}
             # Write new web page to file or update existing web page
@@ -150,17 +161,41 @@ def start_crawler(i: int, start_url: str):
                 with lock:
                     with open(f"{args.out}/urls.txt", "a", encoding="utf-8") as f:
                         f.write(og_url+"\n")
+=======
+            filename = url.split("//", 1)[-1].replace("/", "-")
+            result_dict = {"metadata": {"source": url} | result.metadata, "page_content": result.markdown}
+            # Write new web page to file or update existing web page
+            if not url in prev_crawled_links or not args.no_update:
+                with open(f"{args.out}/{filename}.json", "w", encoding="utf-8") as f:
+                    json.dump(result_dict, f, indent=4)
+                    crawled_links.add(url)
+            
+            # Append URL to list of crawled URLs
+            if not url in prev_crawled_links:
+                with lock:
+                    with open(f"{args.out}/urls.txt", "a", encoding="utf-8") as f:
+                        f.write(url+"\n")
+>>>>>>> main
 
             with lock:
                 crawled_links.add(url)
                 # URL might be a redirect
+<<<<<<< HEAD
                 crawled_links.add(og_url)
+=======
+                crawled_links.add(response.url)
+>>>>>>> main
                 
                 # Get child links if max depth hasn't exceeded
                 if depth < args.depth:
                     for link in get_internal_links(url, result.html):
+<<<<<<< HEAD
                         # Prevent duplicate URLs and prevent URLs from being queued more than once
                         if link in crawled_links or link in queued_links:
+=======
+                        # Prevent duplicate URLs
+                        if link in crawled_links:
+>>>>>>> main
                             continue
                         # URL isn't part of specified base URL
                         elif not link.startswith(args.base.rstrip("/")):
@@ -169,9 +204,16 @@ def start_crawler(i: int, start_url: str):
                         elif args.exclude and any([s in link.split("//", 1)[-1] for s in args.exclude]):
                             continue
                     
+<<<<<<< HEAD
                         # Add to queue if not already queued
                         crawler_queue.put((link, depth+1))
                         queued_links.add(link)
+=======
+                        # Add to queue if new link
+                        if not link in queued_links and not link in crawled_links:
+                            crawler_queue.put((link, depth+1))
+                            queued_links.add(link)
+>>>>>>> main
     except (Exception, KeyboardInterrupt) as e:
         print(repr(e))
     
