@@ -122,7 +122,7 @@ def start_crawler(i: int, start_url: str):
             with lock:
                 # URL might be a redirect so check if the redirected URL is already crawled
                 if response.url in crawled_links:
-                    logger.info(f"{get_time()} -- {url} is a redirect or a duplicate, skipping")
+                    logger.warning(f"{get_time()} -- {url} is a redirect or a duplicate, skipping")
                     continue
                  
                 total_docs += 1
