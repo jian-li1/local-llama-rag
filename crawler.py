@@ -114,7 +114,12 @@ def start_crawler(start_url: str):
                 continue
             
             # Original URL
-            og_url = response.url
+            og_url = response.url.split("#")[0]
+            # Original URL might contain excluded strings
+            if any([s in og_url.split("//", 1)[-1] for s in args.exclude]):
+                logger.warning(f"{get_time()} -- {og_url} is excluded")
+                continue
+            
             # URL might be a redirect so check if the original URL is already crawled
             if og_url in crawled_links:
                 logger.warning(f"{get_time()} -- {url} is a redirect or a duplicate, skipping")
@@ -126,7 +131,7 @@ def start_crawler(start_url: str):
             # Process HTML and extract data
             result = process_html(url, response.text)
             
-            filename = og_url.split("//", 1)[-1].replace("/", "-")
+            filename = og_url.split("//", 1)[-1].replace("/", "-").replace(":", "-")
             result_dict = {"metadata": {"source": og_url} | result.metadata, "page_content": result.markdown}
             # Write new web page to file or update existing web page
             if not og_url in prev_crawled_links or not args.no_update:
