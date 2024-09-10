@@ -163,8 +163,8 @@ def start_crawler(i: int, start_url: str):
                         elif args.exclude and any([s in link.split("//", 1)[-1] for s in args.exclude]):
                             continue
                     
-                        # Add to queue if new link
-                        if not link in queued_links and not link in crawled_links:
+                        # Add to queue if not already queued
+                        if not link in queued_links:
                             crawler_queue.put((link, depth+1))
                             queued_links.add(link)
     except (Exception, KeyboardInterrupt) as e:
