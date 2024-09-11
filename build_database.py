@@ -1,5 +1,5 @@
 from langchain_chroma import Chroma
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import MarkdownTextSplitter
 from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain.schema import Document
 from langchain_community.vectorstores.utils import filter_complex_metadata
@@ -10,14 +10,14 @@ import os
 import json
 import time
 import threading
-import re
 
 num_threads = 6
 embeddings = OllamaEmbeddings(model="mxbai-embed-large", num_thread=num_threads)
 
 # Initialize a text splitter with specified chunk size and overlap
-text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-    chunk_size=500, chunk_overlap=250
+text_splitter = MarkdownTextSplitter(
+    # chunk_size = 800, chunk_overlap = 100
+    chunk_size = 500, chunk_overlap = 250
 )
 
 def assign_chunk_id(chunks: List[Document]):
@@ -94,10 +94,6 @@ def process_documents(json_files: List[str], update: bool):
         with open(file) as f:
             data = json.load(f)
         if (metadata := data.get("metadata")) and (content := data.get("page_content")):
-            # Remove newlines and tabs
-            content = re.sub(r"\n\n+ *", "\n\n", content)
-            content = re.sub(r"\t\t*", " ", content)
-
             doc = Document(metadata=metadata, page_content=content)
             upsert_doc(doc, update)
             processed_files += 1
